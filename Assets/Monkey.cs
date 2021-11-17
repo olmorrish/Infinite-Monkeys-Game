@@ -6,11 +6,12 @@ public class Monkey : MonoBehaviour {
 
     [Header("External References")]
     private GameMaster gameMaster;
+    public GameObject keyPressNotificationPrefab;
 
     [Header("Internal References")]
     public Animator anim;
     
-    public const string allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public const string allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ .,:;?-";
 
     // Start is called before the first frame update
     void Awake() {
@@ -26,7 +27,8 @@ public class Monkey : MonoBehaviour {
     /// </summary>
     public void HitRandomKey() {
         char hitKey = allChars[Random.Range(0, allChars.Length - 1)];
-        gameMaster.RegisterMonkeyKeyHit(hitKey);
+        gameMaster.RegisterMonkeyKeyHit(hitKey, this);
+
         Debug.Log("Hit: " + hitKey);
     }
 

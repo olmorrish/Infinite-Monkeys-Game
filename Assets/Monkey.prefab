@@ -115,4 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86334a1ba77162341afdea938df3df2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  keyPressNotificationPrefab: {fileID: 9202482061230606489, guid: cd0287b84517c05428896ad01854a3a7,
+    type: 3}
+  canvas: {fileID: 0}
   anim: {fileID: 4233720015090644531}
