@@ -14,13 +14,13 @@ public class KeyPressNotification : MonoBehaviour {
 
     private void FixedUpdate() {
         float xPos = transform.position.x;
-        float yPos = transform.position.y + 0.01f;
+        float yPos = transform.position.y + 0.015f;
         transform.position = new Vector2(xPos, yPos);
     }
 
     public void Init(char c, Transform spawnPos) {
         textMesh.text = c.ToString();
-        gameObject.transform.position = new Vector2(spawnPos.position.x, spawnPos.position.y + 1);
+        gameObject.transform.position = new Vector2(spawnPos.position.x, spawnPos.position.y + 0.8f);
     }
 
     // Update is called once per frame

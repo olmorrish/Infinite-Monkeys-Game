@@ -14,6 +14,8 @@ public class GameMaster : MonoBehaviour {
     public List<Transform> monkeySpawnPositions;
     private int numMonkeys;
 
+    private int money;
+
     // Start is called before the first frame update
     void Start() {
         allMonkeys = new List<Monkey>();
@@ -22,7 +24,7 @@ public class GameMaster : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (numMonkeys < 10)
+        if (numMonkeys < 1)
             SpawnMonkey();
         
     }
@@ -44,7 +46,7 @@ public class GameMaster : MonoBehaviour {
         newMonkeyObj.transform.position = new Vector2(monkeySpawnPositions[numMonkeys].transform.position.x, monkeySpawnPositions[numMonkeys].transform.position.y);
 
         allMonkeys.Add(newMonkey);
-        newMonkey.anim.playbackTime = allMonkeys[0].anim.playbackTime; //sync with the first monkey
+        //newMonkey.anim.playbackTime = allMonkeys[0].anim.playbackTime; //sync with the first monkey
 
         //DEBUG
         newMonkey.SpeedMultiplier(2);
@@ -68,5 +70,9 @@ public class GameMaster : MonoBehaviour {
 
     private void UpdateAllMonkeySpeed() {
 
+    }
+
+    public void AttemptToBuyMonkey() {
+        SpawnMonkey();
     }
 }
