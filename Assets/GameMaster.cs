@@ -10,9 +10,23 @@ public class GameMaster : MonoBehaviour {
     public GameObject monkeyPrefab;
     public GameObject canvas;
     public GameObject keyPressNotificationPrefab;
+    public GameObject keyPressNotificationSuccessPrefab;
     private List<Monkey> allMonkeys;
     public List<Transform> monkeySpawnPositions;
+    public TMPro.TextMeshProUGUI whiteboard;
     private int numMonkeys;
+    private List<LearTile> allLearTiles; //is a queue
+
+    //Timers
+    public float learTileClearDist;
+    public int maxLearTilesOnscreen;
+    public LayerMask whatIsLearTile;
+
+    //Progress
+    public GameObject learTilePrefab;
+    public Transform learTileSpawnPoint;
+    int learTileSpawnIndex; //the index in the string up to which Lear tiles have been spawned
+    int learTileGoalIndex;
 
     private int money;
 
@@ -20,22 +34,33 @@ public class GameMaster : MonoBehaviour {
     void Start() {
         allMonkeys = new List<Monkey>();
         numMonkeys = 0;
+
+        learTileSpawnIndex = 0;
+        learTileGoalIndex = 0;
+
+        allLearTiles = new List<LearTile>();
+
+        //DEBUG
+        SpawnLearTile();
     }
 
     // Update is called once per frame
     void Update() {
         if (numMonkeys < 1)
             SpawnMonkey();
-        
-    }
 
-    public void Step() {
+
+        Collider2D[] cols = Physics2D.OverlapCircleAll(learTileSpawnPoint.position, learTileClearDist, whatIsLearTile);
+
+        if (allLearTiles.Count < maxLearTilesOnscreen && cols.Length < 1) {
+            SpawnLearTile();
+        }
 
     }
 
     private void SpawnMonkey() {
 
-        if(monkeySpawnPositions.Count < numMonkeys + 1) {
+        if (monkeySpawnPositions.Count < numMonkeys + 1) {
             Debug.LogError("Cannot spawn monkey; not enough spawn positions.");
             return;
         }
@@ -49,7 +74,7 @@ public class GameMaster : MonoBehaviour {
         //newMonkey.anim.playbackTime = allMonkeys[0].anim.playbackTime; //sync with the first monkey
 
         //DEBUG
-        newMonkey.SpeedMultiplier(2);
+        newMonkey.SpeedMultiplier(5);
 
         numMonkeys++;
         newMonkeyObj.name = "Monkey " + numMonkeys;
@@ -58,14 +83,29 @@ public class GameMaster : MonoBehaviour {
 
     public void RegisterMonkeyKeyHit(char hitKey, Monkey monkey) {
 
-        //spawn the notification near the monkey on the canvas
-        GameObject newNotification = Instantiate(keyPressNotificationPrefab, canvas.transform);
-        newNotification.GetComponent<KeyPressNotification>().Init(hitKey, monkey.gameObject.transform);
+        bool success = false;
 
         //TODO add a timer before a button can be hit
-        if (hitKey == theEntiretyOfKingLear[0]) {
-            Debug.Log("K!");
+        if (hitKey == theEntiretyOfKingLear[learTileGoalIndex]) {
+            success = true;
+            if(allLearTiles[0].character == hitKey) {
+                allLearTiles[0].Pass();
+                allLearTiles.RemoveAt(0);
+            }
+            else {
+                Debug.Log("DESYNC: the leading LearTile doesn't have a matching character to the goal index character in the string of text.");
+            }
+            learTileGoalIndex++;
         }
+
+        //spawn the notification near the monkey on the canvas
+        GameObject newNotification = Instantiate(success ? keyPressNotificationSuccessPrefab : keyPressNotificationPrefab, canvas.transform);
+        newNotification.GetComponent<KeyPressNotification>().Init(hitKey, monkey.gameObject.transform, success);
+
+    }
+
+    public void ChangeWhiteboardText(string newText) {
+        whiteboard.text = newText;
     }
 
     private void UpdateAllMonkeySpeed() {
@@ -74,5 +114,18 @@ public class GameMaster : MonoBehaviour {
 
     public void AttemptToBuyMonkey() {
         SpawnMonkey();
+    }
+
+    public void SpawnLearTile() {
+        GameObject newLearTileObj = Instantiate(learTilePrefab, canvas.transform);
+        newLearTileObj.transform.position = new Vector2(learTileSpawnPoint.transform.position.x, learTileSpawnPoint.transform.position.y);
+        newLearTileObj.GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
+
+        LearTile newLearTile = newLearTileObj.GetComponent<LearTile>();
+        newLearTile.Init(theEntiretyOfKingLear[learTileSpawnIndex]);
+        allLearTiles.Add(newLearTile);
+
+        learTileSpawnIndex++;
+
     }
 }

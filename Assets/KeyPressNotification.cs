@@ -18,8 +18,10 @@ public class KeyPressNotification : MonoBehaviour {
         transform.position = new Vector2(xPos, yPos);
     }
 
-    public void Init(char c, Transform spawnPos) {
+    public void Init(char c, Transform spawnPos, bool invertTextColor) {
         textMesh.text = c.ToString();
+        if (invertTextColor)
+            textMesh.color = Color.black;
         gameObject.transform.position = new Vector2(spawnPos.position.x, spawnPos.position.y + 0.8f);
     }
 
