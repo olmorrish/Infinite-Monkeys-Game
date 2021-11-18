@@ -13,7 +13,8 @@ public class GameMaster : MonoBehaviour {
     public GameObject keyPressNotificationSuccessPrefab;
     private List<Monkey> allMonkeys;
     public List<Transform> monkeySpawnPositions;
-    public TMPro.TextMeshProUGUI whiteboard;
+    public TMPro.TextMeshProUGUI whiteboardText;
+    public TMPro.TextMeshProUGUI progressText;
     private int numMonkeys;
     private List<LearTile> allLearTiles; //is a queue
 
@@ -28,12 +29,25 @@ public class GameMaster : MonoBehaviour {
     int learTileSpawnIndex; //the index in the string up to which Lear tiles have been spawned
     int learTileGoalIndex;
 
+    int numPlants;
+    int numPosters;
+    public List<GameObject> allPlants;
+    public List<GameObject> allPosters;
+
+    public TMPro.TextMeshProUGUI moneyText;
     private int money;
 
     // Start is called before the first frame update
     void Start() {
         allMonkeys = new List<Monkey>();
         numMonkeys = 0;
+
+        numPlants = 0;
+        numPosters = 0;
+        foreach (GameObject plant in allPlants)
+            plant.SetActive(false);
+        foreach (GameObject poster in allPosters)
+            poster.SetActive(false);
 
         learTileSpawnIndex = 0;
         learTileGoalIndex = 0;
@@ -42,6 +56,8 @@ public class GameMaster : MonoBehaviour {
 
         //DEBUG
         SpawnLearTile();
+
+        money = 0;
     }
 
     // Update is called once per frame
@@ -49,13 +65,19 @@ public class GameMaster : MonoBehaviour {
         if (numMonkeys < 1)
             SpawnMonkey();
 
-
         Collider2D[] cols = Physics2D.OverlapCircleAll(learTileSpawnPoint.position, learTileClearDist, whatIsLearTile);
 
         if (allLearTiles.Count < maxLearTilesOnscreen && cols.Length < 1) {
             SpawnLearTile();
         }
 
+        //set the first goal 
+        if(learTileGoalIndex == 0) {
+            allLearTiles[0].MakeGoal();
+        }
+
+        progressText.text = (learTileGoalIndex / 150746f) + "%";
+        moneyText.text = "$" + money;
     }
 
     private void SpawnMonkey() {
@@ -74,7 +96,7 @@ public class GameMaster : MonoBehaviour {
         //newMonkey.anim.playbackTime = allMonkeys[0].anim.playbackTime; //sync with the first monkey
 
         //DEBUG
-        newMonkey.SpeedMultiplier(5);
+        newMonkey.SpeedMultiplier(1f);
 
         numMonkeys++;
         newMonkeyObj.name = "Monkey " + numMonkeys;
@@ -87,10 +109,14 @@ public class GameMaster : MonoBehaviour {
 
         //TODO add a timer before a button can be hit
         if (hitKey == theEntiretyOfKingLear[learTileGoalIndex]) {
+
             success = true;
+
             if(allLearTiles[0].character == hitKey) {
-                allLearTiles[0].Pass();
+                allLearTiles[0].Pass(); //turn the newly-passed LearTile pink and allow it to pass the barrier
                 allLearTiles.RemoveAt(0);
+                allLearTiles[0].MakeGoal(); //turn the new goal LearTile lighter blue
+                money++;
             }
             else {
                 Debug.Log("DESYNC: the leading LearTile doesn't have a matching character to the goal index character in the string of text.");
@@ -105,21 +131,53 @@ public class GameMaster : MonoBehaviour {
     }
 
     public void ChangeWhiteboardText(string newText) {
-        whiteboard.text = newText;
+        whiteboardText.text = newText;
     }
 
     private void UpdateAllMonkeySpeed() {
+        float speedToSet = 1;
+        speedToSet += (0.5f * numPosters);
+        if(numPlants > 0)
+            speedToSet *= 1 + (numPlants * 0.5f);
 
+        foreach(Monkey m in allMonkeys) {
+            m.SetSpeed(speedToSet);
+        }
     }
 
     public void AttemptToBuyMonkey() {
         SpawnMonkey();
+        UpdateAllMonkeySpeed();
+    }
+
+    public void AttemptToBuyPlants() {
+
+        if(numPlants < 4) {
+            allPlants[numPlants].SetActive(true);
+            numPlants++;
+            UpdateAllMonkeySpeed();
+        }
+        else {
+            whiteboardText.text = "No more room for plants!";
+        }
+    }
+
+    public void AttemptToBuyPosters() {
+
+        if(numPosters < 4) {
+            allPosters[numPosters].SetActive(true);
+            numPosters++;
+            UpdateAllMonkeySpeed();
+        }
+        else {
+            whiteboardText.text = "No more room for posters!";
+        }
     }
 
     public void SpawnLearTile() {
         GameObject newLearTileObj = Instantiate(learTilePrefab, canvas.transform);
         newLearTileObj.transform.position = new Vector2(learTileSpawnPoint.transform.position.x, learTileSpawnPoint.transform.position.y);
-        newLearTileObj.GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
+        newLearTileObj.GetComponent<Rigidbody2D>().AddForce(Vector2.left * 2f, ForceMode2D.Impulse);
 
         LearTile newLearTile = newLearTileObj.GetComponent<LearTile>();
         newLearTile.Init(theEntiretyOfKingLear[learTileSpawnIndex]);

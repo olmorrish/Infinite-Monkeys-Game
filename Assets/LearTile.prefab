@@ -249,6 +249,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character: 0
   textMesh: {fileID: 2830669201772463070}
+  passedSprite: {fileID: 21300000, guid: d0b441ed8cc93744ba8a4155bbda8ceb, type: 3}
+  goalSprite: {fileID: 21300000, guid: 9c76bea00bb68634e915b5df1e5707f1, type: 3}
 --- !u!50 &2830669202017112685
 Rigidbody2D:
   serializedVersion: 4

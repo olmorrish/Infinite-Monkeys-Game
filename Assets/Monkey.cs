@@ -11,7 +11,7 @@ public class Monkey : MonoBehaviour {
     [Header("Internal References")]
     public Animator anim;
     
-    public const string allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ .,':;?-";
+    public const string allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ .,':;?!-";
 
     // Start is called before the first frame update
     void Awake() {
@@ -20,6 +20,7 @@ public class Monkey : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        
     }
 
     /// <summary>
