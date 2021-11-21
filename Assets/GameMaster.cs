@@ -41,11 +41,13 @@ public class GameMaster : MonoBehaviour {
     public TMPro.TextMeshProUGUI moneyText;
     public TMPro.TextMeshProUGUI costText;
     private Color darkRed;
-    private int money;
+    public int money;
 
     [Header("SFX")]
     public AudioSource sfxSuccess;
     public AudioSource sfxKaching;
+    public AudioSource music;
+    public bool sound;
 
     // Start is called before the first frame update
     void Start() {
@@ -69,6 +71,7 @@ public class GameMaster : MonoBehaviour {
 
         money = 0;
         darkRed = costText.color;
+        sound = true;
     }
 
     // Update is called once per frame
@@ -129,7 +132,8 @@ public class GameMaster : MonoBehaviour {
                 allLearTiles.RemoveAt(0);
                 allLearTiles[0].MakeGoal(); //turn the new goal LearTile lighter blue
                 money++;
-                sfxSuccess.Play();
+                if(sound)
+                    sfxSuccess.Play();
             }
             else {
                 Debug.Log("DESYNC: the leading LearTile doesn't have a matching character to the goal index character in the string of text.");
@@ -154,7 +158,7 @@ public class GameMaster : MonoBehaviour {
                     costText.text = "-$" + allMonkeyCosts[numMonkeys];
                 }
                 else {
-                    costText.text = "N/A";
+                    costText.text = "MAX";
                 }
                 break;
             case "plant":
@@ -163,7 +167,7 @@ public class GameMaster : MonoBehaviour {
                     costText.text = "-$" + allPlantCosts[numPlants];
                 }
                 else {
-                    costText.text = "N/A";
+                    costText.text = "MAX";
                 }
                 break;
             case "poster":
@@ -172,8 +176,13 @@ public class GameMaster : MonoBehaviour {
                     costText.text = "-$" + allPosterCosts[numPosters];
                 }
                 else {
-                    costText.text = "N/A";
+                    costText.text = "MAX";
                 }
+                break;
+            case "radio":
+                whiteboardText.text = "TOGGLE MUSIC + SFX";
+                costText.color = Color.black;
+                costText.text = "SHOP";
                 break;
             case "none":
                 whiteboardText.text = "WRITE SOME SHAKESPEARE!";
@@ -198,7 +207,8 @@ public class GameMaster : MonoBehaviour {
 
         if(money >= allMonkeyCosts[numMonkeys]) {
             money -= allMonkeyCosts[numMonkeys];
-            sfxKaching.Play();
+            if(sound)
+                sfxKaching.Play();
             SpawnMonkey();
             UpdateAllMonkeySpeed();
         }
@@ -209,7 +219,8 @@ public class GameMaster : MonoBehaviour {
 
         if (money >= allPlantCosts[numPlants]) {
             money -= allPlantCosts[numPlants];
-            sfxKaching.Play();
+            if(sound)
+                sfxKaching.Play();
 
             if (numPlants < 4) {
                 allPlants[numPlants].SetActive(true);
@@ -226,7 +237,8 @@ public class GameMaster : MonoBehaviour {
 
         if (money >= allPosterCosts[numPosters]) {
             money -= allPosterCosts[numPosters];
-            sfxKaching.Play();
+            if(sound)
+                sfxKaching.Play();
 
             if (numPosters < 4) {
                 allPosters[numPosters].SetActive(true);
@@ -237,6 +249,15 @@ public class GameMaster : MonoBehaviour {
                 whiteboardText.text = "No more room for posters!";
             }
         }
+    }
+
+    public void ToggleMusic() {
+        sound = !sound;
+        //music.enabled = sound;
+        if (sound)
+            music.Play();
+        else
+            music.Pause();
     }
 
     public void SpawnLearTile() {

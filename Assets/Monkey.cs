@@ -27,7 +27,7 @@ public class Monkey : MonoBehaviour {
     /// Called as animation event.
     /// </summary>
     public void HitRandomKey() {
-        char hitKey = allChars[Random.Range(0, allChars.Length - 1)];
+        char hitKey = allChars[Random.Range(0, allChars.Length)];
         gameMaster.RegisterMonkeyKeyHit(hitKey, this);
 
         Debug.Log("Hit: " + hitKey);
@@ -45,7 +45,4 @@ public class Monkey : MonoBehaviour {
         anim.speed *= multiplier;
     }
 
-    public void SpeedDelta(float delta) {
-        anim.speed += delta;
-    }
 }
