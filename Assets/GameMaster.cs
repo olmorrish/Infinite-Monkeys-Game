@@ -10,6 +10,7 @@ public class GameMaster : MonoBehaviour {
 
     public GameObject monkeyPrefab;
     public GameObject canvas;
+    public GameObject endPanelPrefab;
     public GameObject keyPressNotificationPrefab;
     public GameObject keyPressNotificationSuccessPrefab;
     private List<Monkey> allMonkeys;
@@ -49,6 +50,8 @@ public class GameMaster : MonoBehaviour {
     public AudioSource music;
     public bool sound;
 
+    bool gameOver;
+
     // Start is called before the first frame update
     void Start() {
         allMonkeys = new List<Monkey>();
@@ -61,8 +64,8 @@ public class GameMaster : MonoBehaviour {
         foreach (GameObject poster in allPosters)
             poster.SetActive(false);
 
-        learTileSpawnIndex = 0;
-        learTileGoalIndex = 0;
+        learTileSpawnIndex = 14300;
+        learTileGoalIndex = 14300;
 
         allLearTiles = new List<LearTile>();
 
@@ -72,6 +75,7 @@ public class GameMaster : MonoBehaviour {
         money = 0;
         darkRed = costText.color;
         sound = true;
+        gameOver = false;
     }
 
     // Update is called once per frame
@@ -93,6 +97,16 @@ public class GameMaster : MonoBehaviour {
         float progress = (((float)learTileGoalIndex) / ((float)theEntiretyOfKingLear.Length - 1))*100f;
         progressText.text = string.Format("{0:0.0000}%", progress);
         moneyText.text = "$" + money;
+
+        if (!gameOver && progress >= 100f) {
+            gameOver = true;
+
+            foreach(Monkey m in allMonkeys) {
+                m.SetSpeed(0f);
+            }
+
+            Instantiate(endPanelPrefab, canvas.transform);
+        }
     }
 
     private void SpawnMonkey() {
