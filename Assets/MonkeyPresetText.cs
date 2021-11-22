@@ -39,16 +39,7 @@ public class MonkeyPresetText : MonoBehaviour {
         index = (index + 1) % charsToIterateOver.Length;
     }
 
-    public float GetSpeed() {
-        return anim.speed;
-    }
-
     public void SetSpeed(float newSpeed) {
         anim.speed = newSpeed;
     }
-
-    public void SpeedMultiplier(float multiplier) {
-        anim.speed *= multiplier;
-    }
-
 }

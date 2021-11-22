@@ -8,9 +8,8 @@ public class Monkey : MonoBehaviour {
     private GameMaster gameMaster;
     public GameObject keyPressNotificationPrefab;
 
-    [Header("Internal References")]
+    [Header("Internal References and State")]
     public Animator anim;
-    
     public const string allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ .,':;?!-";
 
     // Start is called before the first frame update
@@ -18,31 +17,21 @@ public class Monkey : MonoBehaviour {
         gameMaster = GameObject.Find("GameMasterObject").GetComponent<GameMaster>();
     }
 
-    // Update is called once per frame
-    void Update() {
-        
-    }
-
     /// <summary>
-    /// Called as animation event.
+    /// Select a random key then notify the GameMaster for handling.
+    /// Called as animation event whenever the monkey hits the typewriter in the animation. The speed of the monkey is controlled entirely via animator speed. 
     /// </summary>
     public void HitRandomKey() {
         char hitKey = allChars[Random.Range(0, allChars.Length)];
         gameMaster.RegisterMonkeyKeyHit(hitKey, this);
-
-        Debug.Log("Hit: " + hitKey);
+        //Debug.Log("Hit: " + hitKey);
     }
 
-    public float GetSpeed() {
-        return anim.speed;
-    }
-
+    /// <summary>
+    /// Sets the speed of the animator. Called by GameMaster to sync monkey speeds. 
+    /// </summary>
+    /// <param name="newSpeed">The new speed multiplier.</param>
     public void SetSpeed(float newSpeed) {
         anim.speed = newSpeed;
     }
-
-    public void SpeedMultiplier(float multiplier) {
-        anim.speed *= multiplier;
-    }
-
 }

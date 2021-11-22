@@ -5,12 +5,14 @@ using UnityEngine.UI;
 
 public class LearTile : MonoBehaviour {
 
+    [Header("Internal References")]
     public char character;
+    private Image image;
     private Rigidbody2D rb;
     private Collider2D col;
     public TMPro.TextMeshProUGUI textMesh;
 
-    private Image image;
+    [Header("External References")]
     public Sprite passedSprite;
     public Sprite goalSprite;
 
@@ -21,11 +23,16 @@ public class LearTile : MonoBehaviour {
         image = GetComponent<Image>();
     }
 
+    /// <summary>
+    /// Initialize the Lear Tile. Called by the spawning script. 
+    /// </summary>
+    /// <param name="charToSet">Character to display and internally remember.</param>
     public void Init(char charToSet) {
         character = charToSet;
         textMesh.text = charToSet.ToString();
     }
 
+    //Lear Tiles float left slowly.
     private void FixedUpdate() {
         rb.AddForce(Vector2.left, ForceMode2D.Force);
     }
@@ -37,13 +44,19 @@ public class LearTile : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Changes the sprite to indicate this is the goal letter.
+    /// </summary>
     public void MakeGoal() {
         image.sprite = goalSprite;
     }
 
+    /// <summary>
+    /// Changes the layer of the Lear Tile so it can pass through the invisible barrier and eventually despawn.
+    /// Called on this tile if it's the first (goal) tile and it's char is pressed by a monkey.  
+    /// </summary>
     public void Pass() {
-        gameObject.layer = LayerMask.NameToLayer("LearTilePassed"); //makes this tile only collide with other tiles
+        gameObject.layer = LayerMask.NameToLayer("LearTilePassed");
         image.sprite = passedSprite;
-        //col.enabled = false;
     }
 }
