@@ -64,8 +64,8 @@ public class GameMaster : MonoBehaviour {
         foreach (GameObject poster in allPosters)
             poster.SetActive(false);
 
-        learTileSpawnIndex = 14300;
-        learTileGoalIndex = 14300;
+        learTileSpawnIndex = 0;
+        learTileGoalIndex = 0;
 
         allLearTiles = new List<LearTile>();
 
