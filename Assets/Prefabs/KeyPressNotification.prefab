@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textMesh: {fileID: 9202482062031056783}
-  ttl: 1
+  timeToLive: 0.8
 --- !u!114 &9202482061230606487
 MonoBehaviour:
   m_ObjectHideFlags: 0
